@@ -1,0 +1,163 @@
+<div class="builder">
+  <header class="builder__header">
+    <h1 class="builder__title">Form Builder</h1>
+    <p class="builder__subtitle">Add fields to your form and configure their properties.</p>
+  </header>
+
+  @if (state$ | async; as state) {
+    <div class="builder__workspace">
+      <aside class="builder__panel builder__panel--left">
+        <div class="builder__panel-header">
+          <h2 class="builder__panel-title">
+            Fields
+            @if (state.totalFields > 0) {
+              <span class="builder__count">{{ state.totalFields }}</span>
+            }
+          </h2>
+
+          <div class="builder__add-wrap">
+            <button
+              type="button"
+              class="builder__add-btn"
+              (click)="toggleTypeMenu('header', $event)"
+            >
+              +
+            </button>
+
+            @if (state.typeMenuSource === 'header') {
+              <ul class="builder__type-menu builder__type-menu--down">
+                @for (opt of fieldTypeOptions; track opt.type) {
+                  <li>
+                    <button
+                      type="button"
+                      class="builder__type-option"
+                      (click)="addField(opt.type, $event)"
+                    >
+                      <span class="builder__type-icon">{{ opt.icon }}</span>
+                      {{ opt.label }}
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+
+        @if (state.totalFields > 0) {
+          <div class="builder__filter-wrap">
+            <input
+              type="search"
+              class="builder__filter-input"
+              placeholder="Filter fields…"
+              autocomplete="off"
+              [value]="state.fieldFilter"
+              (input)="setFieldFilter($any($event.target).value)"
+            />
+          </div>
+        }
+
+        @if (state.totalFields === 0) {
+          <p class="builder__list-empty">No fields yet.</p>
+        } @else if (state.fields.length === 0) {
+          <p class="builder__list-empty">No fields match "{{ state.fieldFilter }}".</p>
+        } @else {
+          <ul class="builder__field-list">
+            @for (field of state.fields; track field.id) {
+              <li class="builder__field-row" [class.builder__field-row--active]="field.id === state.selectedFieldId">
+                <button
+                  type="button"
+                  class="builder__field-row-btn"
+                  (click)="selectField(field.id)"
+                >
+                  <span class="builder__field-row-icon">{{ getTypeIcon(field.type) }}</span>
+                  <span class="builder__field-row-text">
+                    <span class="builder__field-row-label">{{ field.label }}</span>
+                    <span class="builder__field-row-type">{{ field.type }}</span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  class="builder__field-remove"
+                >
+                  ›
+                </button>
+              </li>
+            }
+          </ul>
+        }
+
+        <div class="builder__panel-footer">
+          <div class="builder__add-wrap builder__add-wrap--footer">
+            <button
+              type="button"
+              class="builder__add-field-btn"
+              (click)="toggleTypeMenu('footer', $event)"
+            >
+              + Add field
+            </button>
+
+            @if (state.typeMenuSource === 'footer') {
+              <ul class="builder__type-menu">
+                @for (opt of fieldTypeOptions; track opt.type) {
+                  <li>
+                    <button
+                      type="button"
+                      class="builder__type-option"
+                      (click)="addField(opt.type, $event)"
+                    >
+                      <span class="builder__type-icon">{{ opt.icon }}</span>
+                      {{ opt.label }}
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+      </aside>
+
+      <section class="builder__panel builder__panel--right">
+        <div class="builder__panel-header">
+          <h2 class="builder__panel-title">Properties</h2>
+          @if (state.selectedField) {
+            <div class="builder__header-actions">
+              <button
+                type="button"
+                class="builder__remove-btn"
+                (click)="removeField(state.selectedField.id, $event)"
+              >
+                Remove
+              </button>
+              <button
+                type="button"
+                class="builder__revert-btn"
+                (click)="revertField()"
+              >
+                Revert
+              </button>
+              <button
+                type="button"
+                class="builder__apply-btn"
+                (click)="applyField()"
+              >
+                Apply
+              </button>
+            </div>
+          }
+        </div>
+        @if (state.selectedField) {
+          <div class="builder__properties-body">
+            <app-field-card
+              [field]="state.selectedField"
+              (fieldChange)="onFieldChange(state.selectedField.id, $event)"
+            />
+          </div>
+        } @else {
+          <div class="builder__no-selection">
+            <p>Select a field from the left panel to edit its properties.</p>
+          </div>
+        }
+      </section>
+    </div>
+  }
+</div>

@@ -1,0 +1,17 @@
+<nav class="nav" aria-label="Main navigation">
+  <a class="nav__brand" routerLink="/">Form Builder</a>
+  <ul class="nav__links" role="list">
+    <li>
+      <a routerLink="/" routerLinkActive="nav__link--active" [routerLinkActiveOptions]="{ exact: true }" class="nav__link">Home</a>
+    </li>
+    <li>
+      <a routerLink="/builder" routerLinkActive="nav__link--active" class="nav__link">Build Form</a>
+    </li>
+    <li>
+      <a routerLink="/records/new" routerLinkActive="nav__link--active" class="nav__link">New Record</a>
+    </li>
+    <li>
+      <a routerLink="/records" routerLinkActive="nav__link--active" [routerLinkActiveOptions]="{ exact: true }" class="nav__link">Records</a>
+    </li>
+  </ul>
+</nav>

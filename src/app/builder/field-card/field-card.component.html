@@ -1,0 +1,47 @@
+<form [formGroup]="form" class="field-card">
+  <div class="field-card__row">
+    <label class="field-card__label" [for]="'type-' + field.id">Field Type</label>
+    <select class="field-card__select" [id]="'type-' + field.id" formControlName="type">
+      @for (opt of fieldTypeOptions; track opt.type) {
+        <option [value]="opt.type">{{ opt.label }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="field-card__row">
+    <label class="field-card__label" [for]="'label-' + field.id">Field Title</label>
+    <input
+      class="field-card__input"
+      type="text"
+      [id]="'label-' + field.id"
+      formControlName="label"
+      placeholder="Enter field title"
+    />
+  </div>
+
+  <hr class="field-card__divider" />
+
+  <div class="field-card__row">
+    <span class="field-card__label">Required</span>
+    <div class="field-card__radio-group">
+      <label class="field-card__radio-label">
+        <input
+          type="radio"
+          class="field-card__radio"
+          formControlName="required"
+          [value]="true"
+        />
+        Required
+      </label>
+      <label class="field-card__radio-label">
+        <input
+          type="radio"
+          class="field-card__radio"
+          formControlName="required"
+          [value]="false"
+        />
+        Not Required
+      </label>
+    </div>
+  </div>
+</form>

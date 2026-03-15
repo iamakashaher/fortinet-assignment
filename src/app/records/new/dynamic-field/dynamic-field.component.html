@@ -1,0 +1,29 @@
+<div class="field-wrap">
+  <label class="field-label" [for]="'field-' + field.id">
+    {{ field.label }}
+    @if (field.required) {
+      <span class="field-required" aria-hidden="true">*</span>
+    }
+  </label>
+
+  @if (isTextarea) {
+    <textarea
+      class="field-control"
+      [id]="'field-' + field.id"
+      [formControlName]="field.id"
+      [attr.aria-required]="field.required"
+      [attr.aria-describedby]="'err-' + field.id"
+      rows="4"
+    ></textarea>
+  } @else {
+    <input
+      class="field-control"
+      [type]="inputType"
+      [id]="'field-' + field.id"
+      [formControlName]="field.id"
+      [attr.step]="inputStep"
+      [attr.aria-required]="field.required"
+      [attr.aria-describedby]="'err-' + field.id"
+    />
+  }
+</div>

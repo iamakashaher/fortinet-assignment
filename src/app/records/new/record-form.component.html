@@ -1,0 +1,37 @@
+<main class="record-form-page">
+  <header class="record-form-page__header">
+    <h1 class="record-form-page__title">New Record</h1>
+    <p class="record-form-page__subtitle">Fill out the form and submit.</p>
+  </header>
+
+  @if (state$ | async; as state) {
+    @if (!state.hasFields) {
+      <div class="record-form-page__empty" role="status">
+        <p>No fields defined yet.</p>
+        <a class="btn btn--primary" routerLink="/builder">Go to Form Builder</a>
+      </div>
+    } @else {
+      <div class="record-form-card">
+        <form [formGroup]="state.form" (ngSubmit)="onSubmit()" novalidate>
+          <div class="record-form-card__fields">
+            @for (field of state.fields; track field.id) {
+              <div class="record-form-card__field-wrap">
+                <app-dynamic-field [field]="field" [submitted]="state.submitted" />
+                @if (isInvalid(state.form, field.id, state.submitted)) {
+                  <p class="record-form-card__error" [id]="'err-' + field.id" role="alert">
+                    {{ getError(state.form, field) }}
+                  </p>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="record-form-card__footer">
+            <button type="submit" class="btn btn--primary">Submit</button>
+            <a class="btn btn--ghost" routerLink="/records">Cancel</a>
+          </div>
+        </form>
+      </div>
+    }
+  }
+</main>

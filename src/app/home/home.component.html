@@ -1,0 +1,33 @@
+@if (state$ | async; as state) {
+  <main class="page">
+    <header class="page__header">
+      <h1 class="page__title">Dynamic Form Builder</h1>
+      <p class="page__subtitle">Create custom forms, collect data, and view your records.</p>
+    </header>
+
+    <div class="cards">
+      <a class="card" routerLink="/builder" [attr.aria-label]="'Build Form — ' + state.fieldCount + ' fields defined'">
+        <div class="card__icon" aria-hidden="true">🏗️</div>
+        <h2 class="card__title">Build Form</h2>
+        <p class="card__description">Design your form schema by adding and configuring fields.</p>
+        <span class="card__badge">{{ state.fieldCount }} field{{ state.fieldCount === 1 ? '' : 's' }}</span>
+      </a>
+
+      <a class="card" routerLink="/records/new">
+        <div class="card__icon" aria-hidden="true">✏️</div>
+        <h2 class="card__title">Create Record</h2>
+        <p class="card__description">Fill out your form and submit a new record.</p>
+        @if (!state.hasFields) {
+          <span class="card__badge card__badge--warn">No fields yet</span>
+        }
+      </a>
+
+      <a class="card" routerLink="/records" [attr.aria-label]="'View Records — ' + state.recordCount + ' records submitted'">
+        <div class="card__icon" aria-hidden="true">📋</div>
+        <h2 class="card__title">View Records</h2>
+        <p class="card__description">Browse all submitted records in a data grid.</p>
+        <span class="card__badge">{{ state.recordCount }} record{{ state.recordCount === 1 ? '' : 's' }}</span>
+      </a>
+    </div>
+  </main>
+}

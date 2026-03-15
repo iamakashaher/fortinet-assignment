@@ -1,0 +1,190 @@
+<main class="data-grid-page">
+  @if (state$ | async; as state) {
+    <header class="data-grid-page__header">
+      <div class="data-grid-page__header-text">
+        <h1 class="data-grid-page__title">Records</h1>
+        <p class="data-grid-page__subtitle">
+          @if (state.hasActiveFilters) {
+            {{ state.paginationInfo.total }} of {{ state.totalRows }} record{{ state.totalRows === 1 ? '' : 's' }}
+          } @else {
+            {{ state.totalRows }} record{{ state.totalRows === 1 ? '' : 's' }} submitted
+          }
+        </p>
+      </div>
+
+      <div class="data-grid-page__actions">
+        @if (state.hasActiveFilters) {
+          <button type="button" class="btn btn--ghost" (click)="clearFilters()">Clear Filters</button>
+        }
+        @if (state.totalRows > 0) {
+          @if (state.clearConfirm) {
+            <span class="data-grid-page__confirm-label">Are you sure?</span>
+            <button type="button" class="btn btn--danger" (click)="executeClear()">Yes, clear all</button>
+            <button type="button" class="btn btn--ghost" (click)="cancelClear()">Cancel</button>
+          } @else {
+            <button type="button" class="btn btn--ghost" (click)="confirmClear()">Clear Records</button>
+          }
+        }
+        <a class="btn btn--primary" routerLink="/records/new">+ New Record</a>
+      </div>
+    </header>
+
+    @if (state.totalRows === 0) {
+      <div class="data-grid-page__empty" role="status">
+        <p>No records yet.</p>
+        @if (state.hasFields) {
+          <a class="btn btn--primary" routerLink="/records/new">Create your first record</a>
+        } @else {
+          <a class="btn btn--primary" routerLink="/builder">Define your form first</a>
+        }
+      </div>
+    } @else {
+      <div class="table-wrap">
+        <table class="table" aria-label="Submitted records">
+          <thead>
+            <tr>
+              <th scope="col" class="table__th" [attr.aria-sort]="getSortAria('submittedAt', state.sortColumn, state.sortDir)">
+                <button
+                  type="button"
+                  class="table__sort-btn"
+                  [class.table__sort-btn--active]="state.sortColumn === 'submittedAt'"
+                  (click)="setSort('submittedAt')"
+                >
+                  Submitted At
+                  <span class="table__sort-icon" aria-hidden="true">{{ getSortIcon('submittedAt', state.sortColumn, state.sortDir) }}</span>
+                </button>
+              </th>
+              @for (col of state.columns; track col.id) {
+                <th scope="col" class="table__th" [attr.aria-sort]="getSortAria(col.id, state.sortColumn, state.sortDir)">
+                  <button
+                    type="button"
+                    class="table__sort-btn"
+                    [class.table__sort-btn--active]="state.sortColumn === col.id"
+                    (click)="setSort(col.id)"
+                  >
+                    {{ col.label }}
+                    <span class="table__sort-icon" aria-hidden="true">{{ getSortIcon(col.id, state.sortColumn, state.sortDir) }}</span>
+                  </button>
+                </th>
+              }
+            </tr>
+            <tr class="table__search-row">
+              <td class="table__search-cell">
+                <label class="sr-only" for="search-submittedAt">Filter by Submitted At</label>
+                <div class="search-input-wrap">
+                  <span class="search-input-wrap__icon" aria-hidden="true">⌕</span>
+                  <input
+                    id="search-submittedAt"
+                    type="search"
+                    class="search-input"
+                    placeholder="Search date…"
+                    [value]="getFilterValue(state.columnFilters, 'submittedAt')"
+                    (input)="setFilter('submittedAt', $any($event.target).value)"
+                    autocomplete="off"
+                  />
+                </div>
+              </td>
+              @for (col of state.columns; track col.id) {
+                <td class="table__search-cell">
+                  <label class="sr-only" [for]="'search-' + col.id">Filter by {{ col.label }}</label>
+                  <div class="search-input-wrap">
+                    <span class="search-input-wrap__icon" aria-hidden="true">⌕</span>
+                    <input
+                      [id]="'search-' + col.id"
+                      type="search"
+                      class="search-input"
+                      [placeholder]="'Search ' + col.label + '…'"
+                      [value]="getFilterValue(state.columnFilters, col.id)"
+                      (input)="setFilter(col.id, $any($event.target).value)"
+                      autocomplete="off"
+                    />
+                  </div>
+                </td>
+              }
+            </tr>
+          </thead>
+
+          <tbody>
+            @if (state.pagedRows.length === 0) {
+              <tr>
+                <td class="table__no-results" [attr.colspan]="state.columns.length + 1" role="status">
+                  No records match the current filters.
+                  <button type="button" class="btn-link" (click)="clearFilters()">Clear filters</button>
+                </td>
+              </tr>
+            } @else {
+              @for (row of state.pagedRows; track row.id) {
+                <tr class="table__row">
+                  <td class="table__td">{{ row.submittedAt | date: 'medium' }}</td>
+                  @for (col of state.columns; track col.id) {
+                    <td class="table__td">{{ getCellValue(row.data, col.id) }}</td>
+                  }
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <span class="pagination__info">
+          Showing {{ state.paginationInfo.start }}–{{ state.paginationInfo.end }} of {{ state.paginationInfo.total }}
+        </span>
+
+        @if (state.totalPages > 1) {
+          <nav class="pagination__pages" aria-label="Page navigation">
+            <button
+              type="button"
+              class="pagination__btn"
+              [disabled]="state.currentPage === 1"
+              (click)="goToPage(state.currentPage - 1, state.totalPages)"
+              aria-label="Previous page"
+            >
+              ‹
+            </button>
+
+            @for (page of state.pageNumbers; track $index) {
+              @if (page === null) {
+                <span class="pagination__ellipsis" aria-hidden="true">…</span>
+              } @else {
+                <button
+                  type="button"
+                  class="pagination__page"
+                  [class.pagination__page--active]="page === state.currentPage"
+                  [attr.aria-current]="page === state.currentPage ? 'page' : null"
+                  (click)="goToPage(page, state.totalPages)"
+                >
+                  {{ page }}
+                </button>
+              }
+            }
+
+            <button
+              type="button"
+              class="pagination__btn"
+              [disabled]="state.currentPage === state.totalPages"
+              (click)="goToPage(state.currentPage + 1, state.totalPages)"
+              aria-label="Next page"
+            >
+              ›
+            </button>
+          </nav>
+        }
+
+        <div class="pagination__size">
+          <label class="pagination__size-label" for="page-size">Rows per page</label>
+          <select
+            id="page-size"
+            class="pagination__size-select"
+            (change)="setPageSize(+$any($event.target).value)"
+          >
+            @for (opt of pageSizeOptions; track opt) {
+              <option [value]="opt" [selected]="state.pageSize === opt">{{ opt }}</option>
+            }
+            <option value="0" [selected]="state.pageSize === 0">All</option>
+          </select>
+        </div>
+      </div>
+    }
+  }
+</main>

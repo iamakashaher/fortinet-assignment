@@ -1,0 +1,62 @@
+.field-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+
+  &__row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+  }
+
+  &__label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  &__select,
+  &__input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-input);
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    background: var(--color-bg);
+    font-family: inherit;
+  }
+
+  &__select {
+    cursor: pointer;
+  }
+
+  &__divider {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 0;
+  }
+
+  &__radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  &__radio {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+  }
+}
