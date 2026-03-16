@@ -2,6 +2,8 @@
 
 A dynamic form builder application built with Angular 21. Create custom form schemas, collect records, and view submitted data in a sortable, filterable data grid.
 
+- **Demo Video/Screenshots Link** - https://drive.google.com/drive/folders/1c8sr6IsiMCDzWSiLFYlGbWXsl0Ozn8vC?usp=drive_link
+
 ## Features
 
 - **Form Builder** — add and configure form fields (text, integer, decimal, textarea, datetime, email, phone, URL)
